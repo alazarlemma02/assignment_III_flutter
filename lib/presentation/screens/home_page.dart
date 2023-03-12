@@ -11,6 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:request_permission/request_permission.dart';
 import 'package:asbeza/presentation/screens/item_list.dart';
 
+import 'drawer_navigation.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -35,28 +37,30 @@ class _HomeState extends State<HomePage> {
         title: const Text('Shop'),
         backgroundColor: Colors.green,
         centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.fromLTRB(5.0, 2.0, 0, 2.0),
-          child: GestureDetector(
-            onTap: (() {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider.value(
-                      value: BlocProvider.of<ItemBloc>(context),
-                      child: const ProfilePage()),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(5.0, 2.0, 10.0, 5.0),
+            child: GestureDetector(
+              onTap: (() {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BlocProvider.value(
+                        value: BlocProvider.of<ItemBloc>(context),
+                        child: const ProfilePage()),
+                  ),
+                );
+              }),
+              child: CircleAvatar(
+                backgroundColor: Colors.black,
+                child: const Icon(
+                  Icons.person,
+                  color: Colors.green,
                 ),
-              );
-            }),
-            child: CircleAvatar(
-              backgroundColor: Colors.black,
-              child: const Icon(
-                Icons.person,
-                color: Colors.green,
               ),
             ),
           ),
-        ),
+        ],
       ),
       body: ItemList(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -90,6 +94,9 @@ class _HomeState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: const BottomNavigationBarScreen(),
+      drawer: Drawer(
+        child: DrawerPage(),
+      ),
     );
   }
 }
