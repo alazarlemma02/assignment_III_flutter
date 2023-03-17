@@ -1,16 +1,10 @@
-import 'package:asbeza/bloc/bloc/asbeza_bloc.dart';
-import 'package:asbeza/data/model/cart.dart';
+import 'package:asbeza/bloc/bloc/item_bloc.dart';
 import 'package:asbeza/presentation/screens/bottom_navigation_bar.dart';
 import 'package:asbeza/presentation/screens/history_page.dart';
 import 'package:asbeza/presentation/screens/profile_page.dart';
 import 'package:flutter/material.dart';
-import 'package:asbeza/data/model/item.dart';
-import 'package:asbeza/data/model/repository/apiServicesProvider.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:request_permission/request_permission.dart';
 import 'package:asbeza/presentation/screens/item_list.dart';
-
 import 'drawer_navigation.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeState extends State<HomePage> {
-  late CartData carData;
+  // late CartData carData;
 
   @override
   Widget build(BuildContext context) {
@@ -82,14 +76,36 @@ class _HomeState extends State<HomePage> {
               );
               print("to the history page");
             },
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Icon(
-                Icons.shopping_cart,
-                color: Colors.black,
-              ),
-              // Text(carData!.totalItemsInCart()),
-            ]),
+            child: BlocConsumer<ItemBloc, ItemState>(
+              listener: (context, state) {
+                // TODO: implement listener
+              },
+              builder: (context, state) {
+                return BlocListener<ItemBloc, ItemState>(
+                  listener: (context, state) {
+                    BlocProvider.of<ItemBloc>(context).cartData.length;
+                  },
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Stack(
+                          children: [
+                            Text(
+                              '${BlocProvider.of<ItemBloc>(context).cartData.length.toString()}',
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.shopping_cart,
+                          color: Colors.black,
+                        ),
+                        // Text(carData!.totalItemsInCart()),
+                      ]),
+                );
+              },
+            ),
           ),
         ),
       ),
