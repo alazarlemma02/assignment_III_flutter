@@ -42,7 +42,9 @@ class _ItemListState extends State<ItemList> {
           }
           if (state is ItemLoadingState) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: Colors.green,
+              ),
             );
           } else if (state is ItemLoadedState) {
             return ListView.builder(
@@ -50,6 +52,7 @@ class _ItemListState extends State<ItemList> {
               itemBuilder: (context, index) {
                 final Item itemName = state.item[index];
                 final cartItem = state.item[index];
+                // int quantity = itemName.getQuantity();
                 return Container(
                   height: 200.0,
                   child: Card(
@@ -208,17 +211,34 @@ class _ItemListState extends State<ItemList> {
                                         actions: [
                                           TextButton(
                                               onPressed: () {
-                                                BlocProvider.of<ItemBloc>(
-                                                        context)
-                                                    .add(ItemAddedCartEvent(
-                                                        items: cartItem));
-                                                ShowSnackBartMessage
-                                                    snackBartMessage =
-                                                    ShowSnackBartMessage();
-                                                snackBartMessage
-                                                    .showSnackBar(context);
+                                                if (quantity <= 0) {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (_) =>
+                                                        AlertDialog(actions: [
+                                                      Text(
+                                                        'Can\'t add \'0\' Quantity!!',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      )
+                                                    ]),
+                                                  );
+                                                } else {
+                                                  BlocProvider.of<ItemBloc>(
+                                                          context)
+                                                      .add(ItemAddedCartEvent(
+                                                          items: cartItem));
+                                                  ShowSnackBartMessage
+                                                      snackBartMessage =
+                                                      ShowSnackBartMessage();
+                                                  snackBartMessage
+                                                      .showSnackBar(context);
 
-                                                Navigator.pop(context);
+                                                  Navigator.pop(context);
+                                                }
+                                                ;
                                               },
                                               child: Text(
                                                 'Add',

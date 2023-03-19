@@ -15,10 +15,19 @@ class Item extends StatefulWidget {
 
   Item({
     this.id,
+    // this.quantity,
     required this.name,
     required this.price,
     required this.image,
   });
+
+  void setQuantity(int quan) {
+    this.quantity = quantity;
+  }
+
+  int getQuantity() {
+    return this.quantity;
+  }
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(

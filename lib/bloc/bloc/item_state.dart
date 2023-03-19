@@ -20,3 +20,8 @@ class ItemLoadedState extends ItemState {
 
   const ItemLoadedState({required this.item, required this.cartData});
 }
+
+class QuantityState extends ItemState {
+  final int quantity;
+  const QuantityState({required this.quantity});
+}

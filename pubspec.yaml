@@ -43,7 +43,7 @@ dependencies:
   mobile_number: ^2.1.1
   request_permission: ^2.1.4
   confirmation_dialog: ^0.0.1
-  sim_data: ^0.0.2
+  # sim_data: ^0.0.2
   permission_handler: ^10.2.0
   
 

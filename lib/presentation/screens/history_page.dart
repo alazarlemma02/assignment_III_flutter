@@ -35,8 +35,13 @@ class _HistoryPageState extends State<HistoryPage> {
     return BlocBuilder<ItemBloc, ItemState>(
       builder: (context, state) {
         if (state is ItemLoadingState) {
-          return const Center(
-            child: Text('Your Cart is Empty'),
+          return Scaffold(
+            body: SafeArea(
+              child: const Center(
+                child: Text('Your Cart is Empty'),
+              ),
+            ),
+            bottomNavigationBar: BottomNavigationBarScreen(),
           );
         }
         if (state is ItemLoadingState) {
@@ -83,6 +88,7 @@ class _HistoryPageState extends State<HistoryPage> {
               itemCount: cartItems.length,
               itemBuilder: (context, index) {
                 final Item itemName = state.cartData[index];
+                int quantity = itemName.getQuantity();
                 final Item itemAdded = Item(
                     name: itemName.name,
                     price: itemName.price,
@@ -130,7 +136,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                   Container(
                                     width: 200,
                                     child: Text(
-                                      '\$${itemAdded.price.toString()}',
+                                      '\$${(itemAdded.price * quantity).toString()}',
                                       style: TextStyle(
                                           color:
                                               Color.fromARGB(255, 0, 210, 7)),

@@ -74,7 +74,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   backgroundColor: Colors.green,
                   child: Icon(
                     Icons.person,
-                    size: 90,
+                    size: 100,
+                    color: Colors.black,
                   ),
                 )),
               ),

@@ -23,3 +23,13 @@ class ItemAddedCartEvent extends ItemEvent {
   List<Object> get props => [];
   get data => items;
 }
+
+class QuantityAddedEvent extends ItemEvent {
+  final int quantity;
+  const QuantityAddedEvent({required this.quantity});
+}
+
+class QuantityDecresedEvent extends ItemEvent {
+  final int quantity;
+  const QuantityDecresedEvent({required this.quantity});
+}
