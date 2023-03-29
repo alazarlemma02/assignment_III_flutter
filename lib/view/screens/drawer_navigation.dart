@@ -1,6 +1,6 @@
-import 'package:asbeza/presentation/screens/history_page.dart';
-import 'package:asbeza/presentation/screens/home_page.dart';
-import 'package:asbeza/presentation/screens/profile_page.dart';
+import 'package:asbeza/view/screens/history_page.dart';
+import 'package:asbeza/view/screens/home_page.dart';
+import 'package:asbeza/view/screens/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';

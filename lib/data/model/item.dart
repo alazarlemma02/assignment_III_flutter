@@ -6,16 +6,18 @@ List<Item> itemFromJson(String str) =>
     List<Item>.from(json.decode(str).map((x) => Item.fromJson(x)));
 
 //     final product = productFromJson(jsonString);
-class Item extends StatefulWidget {
+class Item {
   int? id;
   String name;
   double price;
   String image;
-  int quantity = 1;
+  ValueNotifier<int>? quantity;
+  bool is_added = false;
 
   Item({
     this.id,
-    // this.quantity,
+    this.is_added = false,
+    this.quantity,
     required this.name,
     required this.price,
     required this.image,
@@ -26,10 +28,10 @@ class Item extends StatefulWidget {
   }
 
   int getQuantity() {
-    return this.quantity;
+    return quantity!.value;
   }
 
-  factory Item.fromJson(Map<String, dynamic> json) {
+  factory Item.fromJson(Map<dynamic, dynamic> json) {
     return Item(
       id: json["id"],
       name: json["title"],
@@ -46,8 +48,25 @@ class Item extends StatefulWidget {
   }
 
   @override
+  // ignore: no_logic_in_create_state
   State<StatefulWidget> createState() {
     // TODO: implement createState
     throw UnimplementedError();
+  }
+
+  Map<String, dynamic> toDatabaseJson() {
+    return {
+      //This will be used to convert Item objects that
+      //are to be stored into the datbase in a form of JSON
+      "id": id,
+      "name": name,
+      "price": price,
+      "image": image,
+      "status": is_added,
+    };
+  }
+
+  Map toJson() {
+    return {'name': name, 'price': price, 'image': image, 'status': is_added};
   }
 }

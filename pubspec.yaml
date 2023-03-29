@@ -45,6 +45,9 @@ dependencies:
   confirmation_dialog: ^0.0.1
   # sim_data: ^0.0.2
   permission_handler: ^10.2.0
+  sqflite: ^2.2.6
+  path_provider: ^2.0.14
+  shared_preferences: ^2.0.20
   
 
 dev_dependencies:

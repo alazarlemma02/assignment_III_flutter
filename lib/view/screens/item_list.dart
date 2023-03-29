@@ -1,7 +1,7 @@
 // import 'package:confirmation_dialog/confirmation_dialog.dart';
 import 'package:asbeza/bloc/bloc/item_bloc.dart';
 
-import 'package:asbeza/presentation/screens/snackBar.dart';
+import 'package:asbeza/view/screens/snackBar.dart';
 import 'package:flutter/material.dart';
 import 'package:asbeza/data/model/item.dart';
 
@@ -20,10 +20,16 @@ class _ItemListState extends State<ItemList> {
   // List<CartData>? cartItems;
   int quantity = 1;
   // List<CartData> _cart = [];
-  List<Item> addedItems = [];
+  // List<Item> addedItems = [];
 
   // final Item item;
   RequestPermission requestPermission = RequestPermission.instace;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ItemBloc>().cartPageProvider.getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,7 @@ class _ItemListState extends State<ItemList> {
             return ListView.builder(
               itemCount: state.item.length,
               itemBuilder: (context, index) {
+                final ItemBloc itemBloc = ItemBloc();
                 final Item itemName = state.item[index];
                 final cartItem = state.item[index];
                 // int quantity = itemName.getQuantity();
@@ -226,6 +233,44 @@ class _ItemListState extends State<ItemList> {
                                                     ]),
                                                   );
                                                 } else {
+                                                  final cart =
+                                                      BlocProvider.of<ItemBloc>(
+                                                          context,
+                                                          listen: false);
+                                                  final cartProvider =
+                                                      ItemBloc();
+                                                  void saveData(int index) {
+                                                    cartProvider
+                                                        .cartPageProvider
+                                                        .cartDao
+                                                        .createItem(
+                                                      Item(
+                                                        id: index,
+                                                        name: itemName.name,
+                                                        price: itemName.price,
+                                                        quantity:
+                                                            ValueNotifier(1),
+                                                        image: itemName.image,
+                                                        is_added: true,
+                                                      ),
+                                                    )
+                                                        .then((value) {
+                                                      cart.cartPageProvider
+                                                          .addTotalPrice(
+                                                              itemName.price
+                                                                  .toDouble());
+                                                      cart.cartPageProvider
+                                                          .addCounter();
+                                                      print(
+                                                          'Product Added to cart');
+                                                    }).onError((error,
+                                                            stackTrace) {
+                                                      print(error.toString());
+                                                    });
+                                                  }
+
+                                                  saveData(index);
+
                                                   BlocProvider.of<ItemBloc>(
                                                           context)
                                                       .add(ItemAddedCartEvent(
