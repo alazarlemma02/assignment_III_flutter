@@ -19,24 +19,18 @@ part 'item_state.dart';
 class ItemBloc extends Bloc<ItemEvent, ItemState> {
   ApiServiceProvider apiServiceProvider = ApiServiceProvider();
   List<Item> cartData = [];
-  late CartDao _cartDao = CartDao();
-  late Item quantity;
+  // late CartDao _cartDao = CartDao();
+  // late Item quantity;
   final _cartRepository = CartRepository();
   final _cartController = StreamController<List<Item>>.broadcast();
   get items => _cartController.stream;
   CartPageProvider cartPageProvider = CartPageProvider();
 
-  // int quantity = quan.getQuantity as int;
   ItemBloc() : super(ItemInitial()) {
     on<ItemEvent>((event, emit) async {
       emit(ItemLoadingState());
-      // if (event is ItemLoadingState) {
       List<Item>? item = await apiServiceProvider.fetchItem();
-
       emit(ItemLoadedState(item: item!, cartData: cartData));
-      // } else {
-      // emit(ItemInitial());
-      // }
     });
     on<ItemAddedCartEvent>((event, emit) async {
       emit(CartLoadingState());

@@ -270,12 +270,12 @@ class _ItemListState extends State<ItemList> {
                                                   }
 
                                                   saveData(index);
-                                                  print(cartProvider.cartData
-                                                      .indexOf(itemName));
+                                                  print(cartProvider
+                                                      .cartData[index]);
                                                   BlocProvider.of<ItemBloc>(
-                                                          context)
-                                                      .add(ItemAddedCartEvent(
-                                                          items: cartItem));
+                                                      context)
+                                                    ..add(ItemAddedCartEvent(
+                                                        items: cartItem));
                                                   ShowSnackBartMessage
                                                       snackBartMessage =
                                                       ShowSnackBartMessage();

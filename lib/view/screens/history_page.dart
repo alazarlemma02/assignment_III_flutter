@@ -26,13 +26,6 @@ class _HistoryPageState extends State<HistoryPage> {
   int _selectedIndex = 0;
   List<Map<String, dynamic>>? _cartItem;
 
-  void _onItemTapped(String route) {
-    Navigator.pushNamed(context, route);
-  }
-
-  // late List<Item> cartItems = [];
-
-  // late List<CartData> catData;
   double totalAmount = 0;
   void calculateTotalAmount(List list) {
     double res = 0;
@@ -52,24 +45,6 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    // final cart = BlocProvider.of<ItemBloc>(context);
-
-    // return BlocBuilder<ItemBloc, ItemState?>(
-    // builder: (context, state) {
-    // if (state is CartInitialState) {
-    //   return Scaffold(
-    //     body: SafeArea(
-    //       child: const Center(
-    //         child: Text('Your Cart is Empty'),
-    //       ),
-    //     ),
-    //     bottomNavigationBar: BottomNavigationBarScreen(),
-    //   );
-    // } else {
-    //   for (var i = 0; i < _cartItem!.length; i++) {
-    //     addedItems.add(Item.fromJson(_cartItem![i]));
-    //   }
-    // calculateTotalAmount(state.cartData);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -131,12 +106,13 @@ class _HistoryPageState extends State<HistoryPage> {
               for (var i = 0; i < _cartItem!.length; i++) {
                 itemBloc.cartData.add(Item.fromJson(_cartItem![i]));
               }
-              // return Container(
-              //   color: Colors.blue,
-              //   height: 100,
-              //   width: 100,
-              // );
             }
+          } else if (state is CartLoadingState) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.green,
+              ),
+            );
           } else if (state is CartLoadedState) {
             return ListView.builder(
               itemCount: state.cartProducts.length,
@@ -220,10 +196,6 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
       bottomNavigationBar: const BottomNavigationBarScreen(),
     );
-    // }
-    // return Container();
-    //   },
-    // );
   }
 }
 
