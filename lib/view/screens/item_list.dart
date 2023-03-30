@@ -270,7 +270,8 @@ class _ItemListState extends State<ItemList> {
                                                   }
 
                                                   saveData(index);
-
+                                                  print(cartProvider.cartData
+                                                      .indexOf(itemName));
                                                   BlocProvider.of<ItemBloc>(
                                                           context)
                                                       .add(ItemAddedCartEvent(

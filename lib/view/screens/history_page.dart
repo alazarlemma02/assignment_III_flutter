@@ -1,4 +1,6 @@
 import 'package:asbeza/bloc/bloc/item_bloc.dart';
+import 'package:asbeza/dao/cart_dao.dart';
+import 'package:asbeza/data/model/repository/cart_provider.dart';
 import 'package:asbeza/database/database.dart';
 import 'package:asbeza/view/screens/bottom_navigation_bar.dart';
 import 'package:asbeza/view/widget/cart_widget.dart';
@@ -18,6 +20,7 @@ class _HistoryPageState extends State<HistoryPage> {
   final ItemBloc itemBloc = ItemBloc();
   final DismissDirection _dismissDirection = DismissDirection.horizontal;
   DatabaseProvider? databaseProvider = DatabaseProvider();
+  CartDao cartPageProvider = CartDao();
   int _selectedIndex = 0;
   List<Item> _item = [];
   void _onItemTapped(String route) {
@@ -107,157 +110,101 @@ class _HistoryPageState extends State<HistoryPage> {
               ],
             ),
             bottomNavigationBar: const BottomNavigationBarScreen(),
-            body: ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final Item itemName = state.cartData[index];
-                int quantity = itemName.getQuantity();
-                final Item itemAdded = Item(
-                  name: itemName.name,
-                  price: itemName.price,
-                  image: itemName.image,
-                  quantity: ValueNotifier(
-                      cart.cartPageProvider.cart[index].quantity!.value),
-                  is_added: true,
-                );
-                int cartAmount() {
-                  return state.cartData.length;
-                }
+            body: FutureBuilder<List>(
+              future: cartPageProvider.getItems(),
+              builder: ((context, snapshot) {
+                return snapshot.hasData
+                    ? ListView.builder(
+                        itemCount: state.cartData.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final itemName = state.item[index];
+                          int quantity = itemName.getQuantity();
+                          final Item cartItem = Item(
+                            name: itemName.name,
+                            price: itemName.price,
+                            image: itemName.image,
+                            quantity: ValueNotifier(cart
+                                .cartPageProvider.cart[index].quantity!.value),
+                            is_added: true,
+                          );
+                          int cartAmount() {
+                            return state.cartData.length;
+                          }
 
-                return Container(
-                  height: 180.0,
-                  child: Card(
-                    shadowColor: Colors.green,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Padding(padding: EdgeInsets.all(5.0)),
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Container(
-                                padding: EdgeInsets.only(top: 10.0),
-                                width: 100.0,
-                                child: Image(
-                                  image: NetworkImage(itemAdded.image),
-                                  height: 95.0,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
+                          return Container(
+                            height: 180.0,
+                            child: Card(
+                              shadowColor: Colors.green,
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    padding: EdgeInsets.only(top: 5.0),
-                                    width: 200,
-                                    child: Text(itemAdded.name.toString()),
+                                  Row(
+                                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Padding(padding: EdgeInsets.all(5.0)),
+                                      Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child: Container(
+                                          padding: EdgeInsets.only(top: 10.0),
+                                          width: 100.0,
+                                          child: Image(
+                                            image: NetworkImage(cartItem.image),
+                                            height: 95.0,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 5.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  EdgeInsets.only(top: 5.0),
+                                              width: 200,
+                                              child: Text(
+                                                  cartItem.name.toString()),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            Container(
+                                              width: 200,
+                                              child: Text(
+                                                '\$${(itemName.price * quantity).toString()}',
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 0, 210, 7)),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(
-                                    height: 20,
+                                    height: 5,
                                   ),
-                                  Container(
-                                    width: 200,
-                                    child: Text(
-                                      '\$${(itemAdded.price * quantity).toString()}',
-                                      style: TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 0, 210, 7)),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                  ),
+                                  // const ConfirmToCart(),
+                                  Row(),
                                 ],
                               ),
                             ),
-                            ValueListenableBuilder<int>(
-                                valueListenable: itemAdded.quantity!,
-                                builder: (context, val, child) {
-                                  return PlusMinusButtons(
-                                    addQuantity: () {
-                                      cart.cartPageProvider
-                                          .addQuantity(itemAdded.id!);
-
-                                      cart.cartPageProvider.cartDao
-                                          .updateItem(Item(
-                                              id: index,
-                                              name: itemAdded.name,
-                                              price: itemAdded.price,
-                                              quantity: ValueNotifier(
-                                                  itemAdded.quantity!.value),
-                                              image: itemAdded.image))
-                                          .then((value) {
-                                        setState(() {
-                                          cart.cartPageProvider.addTotalPrice(
-                                              double.parse(
-                                                  itemAdded.price.toString()));
-                                        });
-                                      });
-                                    },
-                                    deleteQuantity: () {
-                                      cart.cartPageProvider
-                                          .deleteQuantity(itemAdded.id!);
-                                      cart.cartPageProvider.removeTotalPrice(
-                                          double.parse(
-                                              itemAdded.price.toString()));
-                                    },
-                                    text: val.toString(),
-                                  );
-                                }),
-                            IconButton(
-                                onPressed: () {
-                                  cart.cartPageProvider.cartDao
-                                      .deleteItem(itemAdded.id!);
-                                  cart.cartPageProvider
-                                      .removeItem(itemAdded.id!);
-                                  cart.cartPageProvider.removeCounter();
-                                },
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: Colors.red.shade800,
-                                )),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        // const ConfirmToCart(),
-                        Row(),
-                      ],
-                    ),
-                  ),
-                );
-              },
+                          );
+                        },
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(),
+                      );
+              }),
             ),
           );
         }
         return Container();
       },
-    );
-  }
-}
-
-class PlusMinusButtons extends StatelessWidget {
-  final VoidCallback deleteQuantity;
-  final VoidCallback addQuantity;
-  final String text;
-  const PlusMinusButtons(
-      {Key? key,
-      required this.addQuantity,
-      required this.deleteQuantity,
-      required this.text})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(onPressed: deleteQuantity, icon: const Icon(Icons.remove)),
-        Text(text),
-        IconButton(onPressed: addQuantity, icon: const Icon(Icons.add)),
-      ],
     );
   }
 }

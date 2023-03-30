@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:asbeza/dao/cart_dao.dart';
 import 'package:asbeza/data/model/repository/cart_provider.dart';
 import 'package:asbeza/data/model/repository/cart_repositroy.dart';
 import 'package:asbeza/database/database.dart';
@@ -17,6 +18,7 @@ part 'item_state.dart';
 class ItemBloc extends Bloc<ItemEvent, ItemState> {
   ApiServiceProvider apiServiceProvider = ApiServiceProvider();
   List<Item> cartData = [];
+  late CartDao _cartDao = CartDao();
   late Item quantity;
   final _cartRepository = CartRepository();
   final _cartController = StreamController<List<Item>>.broadcast();
@@ -35,38 +37,13 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       // emit(ItemInitial());
       // }
     });
-    // on<ItemAddedCartEvent>(
-    //   (event, emit) => {cartPageProvider.cart.add(event.items)},
-    // );
-    // on<QuantityDecresedEvent>(
-    //   (event, emit) async {
-    //     int quan = quantity.getQuantity();
-    //     emit(QuantityState(quantity: quan--));
-    //   },
-    // );
-    // on<QuantityAddedEvent>(
-    //   (event, emit) async {
-    //     int quan = quantity.getQuantity();
-    //     emit(QuantityState(quantity: quan++));
-    //   },
-    // );
-    // Stream<ItemState> mapEventToState(ItemEvent event) async* {
-    //   if (event is CartLoadedEvent) {
-    //     if (state is CartInitialState) {
-    //       final cartResults =
-    //           await cartPageProvider.cart;
-
-    //       yield CartLoadedState(
-
-    //           price: cartPageProvider.totalPrice,
-    //           name: cartResults.na,
-    //           promos: promos.promos,
-    //           appliedPromo: cartResults.appliedPromo,
-    //           cartProducts: cartResults.cartItems);
-    //     } else if (state is CartLoadedState) {
-    //       yield state;
-    //     }
-    //   }
-    // }
+    on<ItemAddedCartEvent>((event, emit) => {
+          if (!cartData.contains(event.data))
+            {
+              cartData.add(event.data),
+              _cartRepository.insertItems(event.data),
+              _cartDao.getItems()
+            }
+        });
   }
 }

@@ -13,7 +13,7 @@ class ItemLoadingState extends ItemState {}
 
 class ItemLoadedState extends ItemState {
   final List item;
-  final List<Item> cartData;
+  final List cartData;
   int cartLength() {
     return cartData.length;
   }
