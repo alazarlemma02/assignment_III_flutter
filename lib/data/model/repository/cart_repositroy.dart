@@ -8,6 +8,10 @@ class CartRepository {
 
   Future insertItems(Item item) => cartDao.createItem(item);
 
+  readItem() async {
+    return await cartDao.getItems();
+  }
+
   Future updateItems(Item item) => cartDao.updateItem(item);
 
   Future deleteItemById(int id) => cartDao.deleteItem(id);

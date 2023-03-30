@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:asbeza/dao/cart_dao.dart';
+import 'package:asbeza/data/model/car_items.dart';
 import 'package:asbeza/data/model/repository/cart_provider.dart';
 import 'package:asbeza/data/model/repository/cart_repositroy.dart';
 import 'package:asbeza/database/database.dart';
@@ -37,13 +38,12 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
       // emit(ItemInitial());
       // }
     });
-    on<ItemAddedCartEvent>((event, emit) => {
-          if (!cartData.contains(event.data))
-            {
-              cartData.add(event.data),
-              _cartRepository.insertItems(event.data),
-              _cartDao.getItems()
-            }
-        });
+    on<ItemAddedCartEvent>((event, emit) async {
+      emit(CartLoadingState());
+      _cartRepository.insertItems(items);
+      cartPageProvider.getData();
+      List<Item> added_items = cartData;
+      emit(CartLoadedState(cartProducts: added_items));
+    });
   }
 }
