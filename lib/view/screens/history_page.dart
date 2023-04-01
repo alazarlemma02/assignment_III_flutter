@@ -1,6 +1,5 @@
 import 'package:asbeza/bloc/bloc/item_bloc.dart';
 import 'package:asbeza/dao/cart_dao.dart';
-import 'package:asbeza/data/model/car_items.dart';
 import 'package:asbeza/data/model/repository/cart_provider.dart';
 import 'package:asbeza/data/model/repository/cart_repositroy.dart';
 import 'package:asbeza/database/database.dart';
@@ -94,31 +93,26 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
       body: BlocBuilder<ItemBloc, ItemState>(
         builder: (context, state) {
-          if (state is CartInitialState) {
-            if (_cartItem == null) {
-              return Scaffold(
-                body: SafeArea(
-                    child: Center(
-                  child: Text("Your cart is empty"),
-                )),
-              );
-            } else {
-              for (var i = 0; i < _cartItem!.length; i++) {
-                itemBloc.cartData.add(Item.fromJson(_cartItem![i]));
-              }
-            }
-          } else if (state is CartLoadingState) {
+          if (state is ItemLoadingState) {
             return const Center(
               child: CircularProgressIndicator(
                 color: Colors.green,
               ),
             );
-          } else if (state is CartLoadedState) {
+          } else if (state is ItemLoadedState) {
+            if (state.cartData.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Your cart is empty!',
+                  style: TextStyle(color: Colors.green, fontSize: 20),
+                ),
+              );
+            }
             return ListView.builder(
-              itemCount: state.cartProducts.length,
+              itemCount: state.cartData.length,
               itemBuilder: (BuildContext context, int index) {
-                final Item itemName = state.cartProducts[index];
-                int quantity = state.cartProducts.length;
+                final itemName = state.cartData[index];
+                int quantity = state.cartData.length;
                 final Item cartItem = Item(
                   name: itemName.name,
                   price: itemName.price,
@@ -126,7 +120,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   is_added: true,
                 );
                 int cartAmount() {
-                  return state.cartProducts.length;
+                  return state.cartData.length;
                 }
 
                 return Container(
@@ -167,7 +161,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                   Container(
                                     width: 200,
                                     child: Text(
-                                      '\$${(cartItem.price * quantity).toString()}',
+                                      '\$${(itemName.price * quantity).toString()}',
                                       style: TextStyle(
                                           color:
                                               Color.fromARGB(255, 0, 210, 7)),

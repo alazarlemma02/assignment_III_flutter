@@ -6,7 +6,7 @@ class CartDao {
   final dbProvider = DatabaseProvider.dbProvider;
 
   //Adds new Item records
-  Future<Item> createItem(Item item) async {
+  createItem(Item item) async {
     var db = await dbProvider.database;
     await db!.insert(cartTable, item.toDatabaseJson());
     return item;
@@ -14,11 +14,16 @@ class CartDao {
 
   //Get All Item items
   //Searches if query string was passed
-  Future<List<Item>> getItems() async {
+  getItems() async {
     var db = await dbProvider.database;
 
     final List<Map<String, Object?>> result = await db!.query(cartTable);
     return result.map((e) => Item.fromJson(e)).toList();
+  }
+
+  getItemById(itemId) async {
+    var db = await dbProvider.database;
+    return await db!.query(cartTable, where: 'id=?', whereArgs: [itemId]);
   }
   // // else {
   // //   result = await db.query(cartTable, columns: columns);

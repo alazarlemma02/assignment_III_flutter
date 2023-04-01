@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:asbeza/dao/cart_dao.dart';
-import 'package:asbeza/data/model/car_items.dart';
 import 'package:asbeza/data/model/repository/cart_provider.dart';
 import 'package:asbeza/data/model/repository/cart_repositroy.dart';
-import 'package:asbeza/database/database.dart';
-import 'package:asbeza/view/screens/item_list.dart';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/model/item.dart';
@@ -19,8 +17,7 @@ part 'item_state.dart';
 class ItemBloc extends Bloc<ItemEvent, ItemState> {
   ApiServiceProvider apiServiceProvider = ApiServiceProvider();
   List<Item> cartData = [];
-  // late CartDao _cartDao = CartDao();
-  // late Item quantity;
+  List cartItem = [];
   final _cartRepository = CartRepository();
   final _cartController = StreamController<List<Item>>.broadcast();
   get items => _cartController.stream;
@@ -30,14 +27,21 @@ class ItemBloc extends Bloc<ItemEvent, ItemState> {
     on<ItemEvent>((event, emit) async {
       emit(ItemLoadingState());
       List<Item>? item = await apiServiceProvider.fetchItem();
+
       emit(ItemLoadedState(item: item!, cartData: cartData));
     });
     on<ItemAddedCartEvent>((event, emit) async {
-      emit(CartLoadingState());
-      _cartRepository.insertItems(items);
-      cartPageProvider.getData();
-      List<Item> added_items = cartData;
-      emit(CartLoadedState(cartProducts: added_items));
+      emit(ItemLoadingState());
+      await _cartRepository.readItem().then((val) => {
+            cartData = val,
+          });
+      cartItem = Item.itemList(cartData);
+      if (!cartItem.contains(event.items)) {
+        cartItem.add(event.items);
+        event.items.is_added = true;
+        _cartRepository.insertItems(event.items);
+      }
+      // emit(ItemLoadedState(item: items, cartData: cartItem));
     });
   }
 }

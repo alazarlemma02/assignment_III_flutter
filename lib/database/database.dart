@@ -28,13 +28,6 @@ class DatabaseProvider {
   }
 
   _initDB(Database database, int version) async {
-    // await database.execute("CREATE TABLE $cartTable ("
-    //     "id INTEGER PRIMARY KEY, "
-    //     "name TEXT, "
-    //     "price DOUBLE, "
-    //     "image TEXT,"
-    //     "status BOOLEAN"
-    //     ")");
     await database.execute(
         'CREATE TABLE $cartTable(id INTEGER PRIMARY KEY, name TEXT, price DOUBLE, image TEXT, status BOOLEAN)');
   }

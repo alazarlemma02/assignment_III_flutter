@@ -26,20 +26,20 @@ class QuantityState extends ItemState {
   const QuantityState({required this.quantity});
 }
 
-// @immutable
-class CartInitialState extends ItemState {}
+// // @immutable
+// class CartInitialState extends ItemState {}
 
-// @immutable
-class CartLoadingState extends ItemState {}
+// // @immutable
+// class CartLoadingState extends ItemState {}
 
-// @immutable
-class CartLoadedState extends ItemState {
-  final List<Item> cartProducts;
-  const CartLoadedState({required this.cartProducts});
+// // @immutable
+// class CartLoadedState extends ItemState {
+//   final List<Item> cartProducts;
+//   const CartLoadedState({required this.cartProducts});
 
-  @override
-  List<Object> get props => [];
-}
+//   @override
+//   List<Object> get props => [];
+// }
 
-// @immutable
-class CartErrorState extends ItemState {}
+// // @immutable
+// class CartErrorState extends ItemState {}

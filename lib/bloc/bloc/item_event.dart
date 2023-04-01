@@ -21,6 +21,8 @@ class ItemAddedCartEvent extends ItemEvent {
 
   @override
   List<Object> get props => [];
+
+  get data => items;
 }
 
 // class QuantityAddedEvent extends ItemEvent {

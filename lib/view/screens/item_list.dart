@@ -57,8 +57,8 @@ class _ItemListState extends State<ItemList> {
               itemCount: state.item.length,
               itemBuilder: (context, index) {
                 final ItemBloc itemBloc = ItemBloc();
-                final Item itemName = state.item[index];
-                final cartItem = state.item[index];
+                final itemName = state.item[index];
+                // final cartItem = state.item[index];
                 // int quantity = itemName.getQuantity();
                 return Container(
                   height: 200.0,
@@ -233,56 +233,70 @@ class _ItemListState extends State<ItemList> {
                                                     ]),
                                                   );
                                                 } else {
-                                                  final cart =
-                                                      BlocProvider.of<ItemBloc>(
-                                                          context,
-                                                          listen: false);
-                                                  final cartProvider =
-                                                      ItemBloc();
-                                                  void saveData(int index) {
-                                                    cartProvider
-                                                        .cartPageProvider
-                                                        .cartDao
-                                                        .createItem(
-                                                      Item(
-                                                        id: index,
-                                                        name: itemName.name,
-                                                        price: itemName.price,
-                                                        quantity:
-                                                            ValueNotifier(1),
-                                                        image: itemName.image,
-                                                        is_added: true,
-                                                      ),
-                                                    )
-                                                        .then((value) {
-                                                      cart.cartPageProvider
-                                                          .addTotalPrice(
-                                                              itemName.price
-                                                                  .toDouble());
-                                                      cart.cartPageProvider
-                                                          .addCounter();
-                                                      print(
-                                                          'Product Added to cart');
-                                                    }).onError((error,
-                                                            stackTrace) {
-                                                      print(error.toString());
-                                                    });
+                                                  setState(() {
+                                                    for (var element
+                                                        in state.cartData) {
+                                                      if (element.id ==
+                                                          itemName.id) {
+                                                        itemName.is_added =
+                                                            true;
+                                                        continue;
+                                                      }
+                                                    }
+                                                  });
+                                                  if (itemName.is_added ==
+                                                      false) {
+                                                    BlocProvider.of<ItemBloc>(
+                                                            context)
+                                                        .add(ItemAddedCartEvent(
+                                                            items: itemName));
+                                                    ShowSnackBartMessage
+                                                        snackBartMessage =
+                                                        ShowSnackBartMessage();
+                                                    snackBartMessage
+                                                        .showSnackBar(context);
+
+                                                    Navigator.pop(context);
+
+                                                    final cart = BlocProvider
+                                                        .of<ItemBloc>(context,
+                                                            listen: false);
+                                                    final cartProvider =
+                                                        ItemBloc();
+                                                    void saveData(int index) {
+                                                      cartProvider
+                                                          .cartPageProvider
+                                                          .cartDao
+                                                          .createItem(
+                                                        Item(
+                                                          id: index,
+                                                          name: itemName.name,
+                                                          price: itemName.price,
+                                                          quantity:
+                                                              ValueNotifier(1),
+                                                          image: itemName.image,
+                                                          is_added: true,
+                                                        ),
+                                                      )
+                                                          .then((value) {
+                                                        cart.cartPageProvider
+                                                            .addTotalPrice(
+                                                                itemName.price
+                                                                    .toDouble());
+                                                        cart.cartPageProvider
+                                                            .addCounter();
+                                                        print(
+                                                            'Product Added to cart');
+                                                      }).onError((error,
+                                                              stackTrace) {
+                                                        print(error.toString());
+                                                      });
+                                                    }
+
+                                                    saveData(index);
+                                                    print(itemBloc
+                                                        .cartItem[index]);
                                                   }
-
-                                                  saveData(index);
-                                                  print(cartProvider
-                                                      .cartData[index]);
-                                                  BlocProvider.of<ItemBloc>(
-                                                      context)
-                                                    ..add(ItemAddedCartEvent(
-                                                        items: cartItem));
-                                                  ShowSnackBartMessage
-                                                      snackBartMessage =
-                                                      ShowSnackBartMessage();
-                                                  snackBartMessage
-                                                      .showSnackBar(context);
-
-                                                  Navigator.pop(context);
                                                 }
                                                 ;
                                               },
